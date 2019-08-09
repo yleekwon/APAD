@@ -1,0 +1,45 @@
+CREATE TABLE users( user_id INT(100) PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100), phone VARCHAR(100), email VARCHAR(100), EID VARCHAR(7) NOT NULL, admin BOOLEAN, CONSTRAINT users
+_unique UNIQUE (email, EID));  
+
+CREATE TABLE venues(venue_id INTEGER(100) PRIMARY KEY AUTO_INCREMENT, bldg_code VARCHAR(5), floor_num INTEGER(5), room_num INTEGER(100), room_capacity INTEGER(100), open_time VARCHAR(5), close_time VARCHAR(5)
+
+CREATE TABLE events(
+event_id INTEGER(100) PRIMARY KEY AUTO_INCREMENT, 
+name VARCHAR(100) NOT NULL, 
+description VARCHAR(500) NOT NULL,
+expected_attendance INTEGER(100) NOT NULL, 
+current_attendance INTEGER(100), 
+venue_id INTEGER(100),
+event_owner VARCHAR(7), 
+start_time VARCHAR(100),CONSTRAINT fk_venues FOREIGN KEY (venue_id) REFERENCES venues(venue_id));
+
+ALTER TABLE users ADD INDEX EID_idx (EID);
+
+ALTER TABLE events ADD CONSTRAINT fk_users FOREIGN KEY (event_owner) REFERENCES users(EID);
+
+CREATE TABLE confirmedEvents(
+confirmedEvents_id INTEGER PRIMARY KEY AUTO_INCREMENT, 
+event_id INTEGER (100), 
+user_id INTEGER (100),
+CONSTRAINT fk_events FOREIGN KEY (event_id) 
+REFERENCES events(event_id),
+CONSTRAINT fk_users_cEvents FOREIGN KEY (user_id) 
+REFERENCES users(user_id));
+
+CREATE TABLE Time(
+time_id INTEGER (100) PRIMARY KEY AUTO_INCREMENT, 
+event_id INTEGER (100), 
+venue_id INTEGER (100),
+timeslot VARCHAR (100),
+CONSTRAINT fk_events_time FOREIGN KEY (event_id) 
+REFERENCES events(event_id),
+CONSTRAINT fk_users_time FOREIGN KEY (venue_id) 
+REFERENCES venues(venue_id));
+
+
+INSERT into users (name, phone, email, EID, admin) values ('Yeggi Lee', '7745787750', 'yleekwon3@gmail.com', 'yl35726', True);
+
+INSERT into venues (bldg_code, floor_num, room_num, room_capacity) values ('PCL', '3', '432', '40');
+
+INSERT into events(name, description, expected_attendance, current_attendance, venue_id, event_owner, start_time) values ("doggos", "love doggos", 10, 5, 1, 'yl35726', "9:00");
+
