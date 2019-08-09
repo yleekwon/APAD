@@ -13,6 +13,7 @@ db_connection_name = os.environ.get('CLOUD_SQL_CONNECTION_NAME')
 
 app = Flask(__name__)
 
+global myEID
 
 ## LOGIN - FORM
 @app.route('/')
@@ -23,7 +24,7 @@ def login():
 ## LOGIN - FORM SUBMISSION
 @app.route('/login_index', methods=['POST'])
 def login_index():
-    global myEID
+    adminError = None
     myEmail = request.form['email']
     myEID = request.form['EID']
     
@@ -52,6 +53,11 @@ def login_index():
     
     cnx.commit()
     return render_template('login_index.html', admin = myAdmin)
+
+def get_myEID():
+    myEID = request.form['EID']
+    return (myEID)
+
 
     
 ## Add user - form 
@@ -86,7 +92,7 @@ def submitted_form():
                                   host=host, db=db_name)
 
         with cnx.cursor() as cursor:
-            userCheck = cursor.execute('SELECT * FROM users WHERE EID = %s', (myEID))
+            userCheck = cursor.execute('SELECT * FROM users WHERE EID = %s', (value=get_myEID()))
             entry = cursor.fetchall()
             num = list(entry)
             myAdmin=0
@@ -114,14 +120,14 @@ def submitted_form():
 def main2():
     return render_template('venue_form.html')
 
-@app.route('/venuesubmitted')
+@app.route('/venuesubmitted', methods=['POST'])
 def submitted_venue():
     bldg_code = request.form['bldg_code']
     floor_num = request.form['floor_num']
     room_num = request.form['room_num']
     room_capacity = request.form['room_capacity']
 
-    if len(EID) != 7: ## NOT SURE HOW TO DO THIS <-- maybe do myAdmin == 1 
+    if 2<1: ## NOT SURE HOW TO DO THIS <-- maybe do myAdmin == 1 
         return ("INVALID EID. PLEASE TRY AGAIN!")
     else:
         if os.environ.get('GAE_ENV') == 'standard':
@@ -147,7 +153,7 @@ def submitted_venue():
             for element in num:
                 if element[5]==1:
                     myAdmin=1
-                    cursor.execute('INSERT INTO  venues(bldg_code, floor_num, room_num, room_capacity) VALUES(%s, %d, %d, %d)' , (bldg_code, floor_num, room_num, room_capacity))
+                    cursor.execute('INSERT INTO venues(bldg_code, floor_num, room_num, room_capacity) VALUES(%s, %d, %d, %d)' , (bldg_code, floor_num, room_num, room_capacity))
                     adminError = None
                 else:
                     adminError = 'You are not allowed to perform this action!'

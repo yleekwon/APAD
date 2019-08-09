@@ -12,7 +12,7 @@
       </div>
       
       <div id="main">
-        <form method="post" action="{{ url_for('submitted_form') }}">
+        <form method="post" action="{{ url_for('submitted_venue') }}">
           <label for="bldg_code">Building Code:</label>
           <input type="text" name="bldg_code"><br />
           
@@ -25,12 +25,6 @@
           <label for="room_capacity">Room Capacity:</label>
           <input type="text" name="room_capacity"><br />
           
-          <label for="open_time">Open Time:</label>
-          <input type="text" name="open_time"><br />
-          
-          <label for="close_time">Close Time:</label>
-          <input type="text" name="close_time"><br />
-          
           <input type="submit">
         </form>
       </div>
@@ -39,4 +33,3 @@
     
   </body>
 </html>
-

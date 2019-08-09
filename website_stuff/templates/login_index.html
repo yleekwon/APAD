@@ -14,12 +14,12 @@
       <div id="main">
         <p>Thanks for your logging in</p>
         {% if admin == 1 %}
-          <p><strong>You are registered as an admin </strong> </p>
+          <p><strong>You are registered as an admin </strong> 
         {% else %}
-          <p><strong>You are registered as a user </strong> </p>
-            {% if adminError % }
+          <p><strong>You are registered as a user </strong> 
+          <!--   {% if adminError % }
               <h3> Error: {{ adminError }} </h3>
-            {% endif % }
+            {% endif % } -->
         {% endif %}
       </div>
 
