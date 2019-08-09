@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title> Welcome Page </title>
+   <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  
+  <body>
+    <div id="container">
+      
+      <div class="pagetitle">
+        <h1>WELCOME</h1>
+      </div>
+
+      <div id="main">
+        <p>Thanks for your logging in</p>
+        {% if admin == 1 %}
+          <p><strong>You are registered as an admin </strong> </p>
+        {% else %}
+          <p><strong>You are registered as a user </strong> </p>
+            {% if adminError % }
+              <h3> Error: {{ adminError }} </h3>
+            {% endif % }
+        {% endif %}
+      </div>
+
+    </div>
+  </body>
+
+</html>
