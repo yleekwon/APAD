@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Add an event</title>
+   <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  <body>
+    <div id="container">
+      <div class="pagetitle">
+        <h1>ADD AN EVENT FORM</h1>
+      </div>
+      <div id="main">
+        <form method="post" action="{{ url_for('submitted_form') }}">
+          <label for="name">Name:</label>
+          <input type="text" name="name"><br />
+          <label for="description">Description:</label>
+          <input type="text" name="description"><br />
+          <label for="expected-attendance">Expected Attendance:</label>
+          <input type="email" name="expected-attendance"><br />
+          <label for="venue_id">Venue ID:</label>
+          <input type="text" name="venue_id"><br />
+          <label for="event_owner">Event Owner:</label>
+          <input type="text" name="event_owner"><br />
+          <label for="start_time">Start Time:</label>
+          <input type="text" name="start_time"><br />
+          <input type="submit">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
