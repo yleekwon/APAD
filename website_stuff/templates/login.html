@@ -1,4 +1,4 @@
-<html>
+<!-- <html>
   <head>
     <title> login </title>
    <link rel="stylesheet" type="text/css" href="/static/style.css">
@@ -22,6 +22,45 @@
         </form>
 
       </div>
+    </div>
+  </body>
+</html>
+ -->
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+  </head>
+  
+  <body>
+    <div class="login">
+      <h1>Login</h1>
+      
+      {% if error %}
+          <p><strong>Error:</strong> {{ error }} </p>
+      {% endif %}
+
+      <form action="{{ url_for('login_index') }}" method="post">
+        
+        <label for="email_pic">
+          <i class="fas fa-user"></i>
+        </label>
+
+        <input type="email" name="email" placeholder="Email" id="email" required>
+        
+
+        <label for="EID_pic">
+          <i class="fas fa-lock"></i>
+        </label>
+        
+        <input type="text" name="EID" placeholder="EID" id="EID" required>
+
+        <input type="submit" value="Login">
+      </form>
     </div>
   </body>
 </html>
