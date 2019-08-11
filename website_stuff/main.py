@@ -4,6 +4,7 @@
 import os
 from flask import Flask,render_template,request
 import pymysql
+import datetime
 
 ## Connecting to the Google Cloud Database
 db_user = os.environ.get('CLOUD_SQL_USERNAME')
@@ -19,6 +20,22 @@ global myEID
 @app.route('/')
 def login():
     return render_template('login.html')
+
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    if os.environ.get('GAE_ENV') == 'standard':
+        # If deployed, use the local socket interface for accessing Cloud SQL
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        cnx = pymysql.connect(user=db_user, password=db_password,
+                              unix_socket=unix_socket, db=db_name)
+    
+    with cnx.cursor() as cur: 
+        cur.execute("SELECT * FROM users")
+        # get all rows
+        rows = cur.fetchall()
+        for row in rows:
+            x=("{0} {1}".format(row[0], row[1]))
+        return x
 
 ## Once logged in, takes you to the index page with the welcome message
 ## LOGIN - FORM SUBMISSION
@@ -52,12 +69,14 @@ def login_index():
             error = None
     
     cnx.commit()
-    return render_template('login_index.html', admin = myAdmin, adminError = None)
+    return render_template('login_index.html', admin = myAdmin)
 
 def get_myEID():
     myEID = request.form['EID']
     return (myEID)
 
+
+    
 ## Add user - form 
 @app.route('/adduser')
 def main1():
@@ -90,19 +109,28 @@ def submitted_form():
                                   host=host, db=db_name)
 
         with cnx.cursor() as cursor:
-            userCheck = cursor.execute('SELECT * FROM users WHERE EID = %s', (get_myEID()))
+            userCheck = cursor.execute('SELECT * FROM users WHERE EID = %s',(get_myEID()))
             entry = cursor.fetchall()
             num = list(entry)
-            myAdmin = 0
-
-            for element in num:
-                if element[5] == 1:
-                    myAdmin = 1
-                    cursor.execute('INSERT INTO users (name, phone, email, EID, admin) VALUES(%s, %s, %s, %s, %s)' , (name, phone, email, EID, admin))
-                    adminError = None
-                else:
-                    adminError = 'You are not allowed to perform this action!'
-                    return render_template('login_index', adminError = adminError)
+            
+            if len(num)==0:
+                error = 'Invalid credentials'
+                return render_template('login.html', error=error)
+            else:
+                myAdmin=0
+                for element in num:
+                    if element[5]==1:
+                        myAdmin=1
+                        break
+            #myAdmin=0
+            if myAdmin==1:
+                #myAdmin=1
+                cursor.execute('INSERT INTO users(name, phone, email, EID, admin) VALUES(%s, %s, %s, %s, %s)', (name, phone, email, EID, admin))
+                adminError = None
+                return render_template('user_submitted_form.html', name=name,email=email, phone=phone, EID=EID,admin=admin)
+            else:
+                adminError = 'You are not allowed to perform this action!'
+                return render_template('login_index', adminError = adminError)
         cnx.commit()
 
         return render_template(
@@ -125,70 +153,72 @@ def submitted_venue():
     room_num = request.form['room_num']
     room_capacity = request.form['room_capacity']
 
-    # ##TODO: WHAT WHAT WHAT
-    # if 2<1: ##<--------- THE FUCK IS  THIS, Also what does this do????
-    #     return ("INVALID EID. PLEASE TRY AGAIN!")
-
     if os.environ.get('GAE_ENV') == 'standard':
         # If deployed, use the local socket interface for accessing Cloud SQL
         unix_socket = '/cloudsql/{}'.format(db_connection_name)
         cnx = pymysql.connect(user=db_user, password=db_password,
                               unix_socket=unix_socket, db=db_name)
     else:
+        # If running locally, use the TCP connections instead
+        # Set up Cloud SQL Proxy (cloud.google.com/sql/docs/mysql/sql-proxy)
+        # so that your application can use 127.0.0.1:3306 to connect to your
+        # Cloud SQL instance
         host = '127.0.0.1'
         cnx = pymysql.connect(user=db_user, password=db_password,
                               host=host, db=db_name)
 
-        with cnx.cursor() as cursor:
-             ## TIME STUFF (?)
-            start_time = '00:00'
-            end_time = '23:00'
-            slot_time = 60
+    with cnx.cursor() as cursor:
+        ## TIME STUFF (?)
+        start_time = '00:00'
+        end_time = '23:00'
+        slot_time = 60
 
-            start_date = datetime.datetime.now().date()
-            end_date = datetime.datetime.now().date() + datetime.timedelta(days=1)
+        start_date = datetime.datetime.now().date()
+        end_date = datetime.datetime.now().date() + datetime.timedelta(days=1)
 
-            days = []
-            date = start_date
-           
-            while date <= end_date:
-                hours = []
-                time = datetime.datetime.strptime(start_time, '%H:%M')
-                end = datetime.datetime.strptime(end_time, '%H:%M')
-                
-                while time <= end:
-                    hours.append(time.strftime("%H:%M"))
-                    time += datetime.timedelta(minutes=slot_time)
-                date += datetime.timedelta(days=1)
-                days.append(hours)
+        days = []
+        date = start_date
+       
+        while date <= end_date:
+            hours = []
+            time = datetime.datetime.strptime(start_time, '%H:%M')
+            end = datetime.datetime.strptime(end_time, '%H:%M')
+            
+            while time <= end:
+                hours.append(time.strftime("%H:%M"))
+                time += datetime.timedelta(minutes=slot_time)
+            date += datetime.timedelta(days=1)
+            days.append(hours)
 
-            userCheck = cursor.execute('SELECT * FROM users WHERE EID = %s', (get_myEID()))
-            entry = cursor.fetchall()
-            num = list(entry)
-            myAdmin = 0
 
-            for element in num:
-                if element[5]==1:
-                    myAdmin=1
-                    cursor.execute('INSERT INTO venues(bldg_code, floor_num, room_num, room_capacity) VALUES(%s, %d, %d, %d)' , (bldg_code, floor_num, room_num, room_capacity))
-                    adminError = None
+        userCheck = cursor.execute('SELECT * FROM users WHERE EID = %s',(get_myEID()))
+        entry = cursor.fetchall()
+        num = list(entry)
+        #myAdmin=0
 
-                    venue = cursor.lastrowid
+        for element in num:
+            if element[5]==1:
+                myAdmin=1
+                cursor.execute('INSERT INTO venues(bldg_code, floor_num, room_num, room_capacity) VALUES(%s, %d, %d, %d)' , (bldg_code, floor_num, room_num, room_capacity))
+                adminError = None
 
-                    for time in hours:
-                        cursor.execute("INSERT INTO Time(venue_id, timeslot) VALUES (%d, %s)", (venue, time))
-                else:
-                    adminError = 'You are not allowed to perform this action!'
-                    return render_template('login_index', adminError = adminError)
-        cnx.commit()
+                venue = cursor.lastrowid
+
+                for time in hours:
+                    cursor.execute("INSERT INTO Time(venue_id, timeslot) VALUES (%d, %s)", (venue, time))
+            else:
+                adminError = 'You are not allowed to perform this action!'
+                return render_template('login_index', adminError = adminError)
+    cnx.commit()
 
     return render_template(
     'venuesubmitted.html',
     bldg_code = bldg_code,
     floor_num = floor_num,
     room_num = room_num,
-    room_capacity = room_capacity
-    )
+    room_capacity = room_capacity)
+    
+
     
 @app.route('/addevent')
 def main3():
@@ -248,13 +278,12 @@ def eventsubmitted():
 
     return render_template(
     'eventsubmitted.html',
-    name = 'name'
-    description = 'description'
-    expected_attendance = 'expected_attendance'
-    venue_id = 'venue_id'
-    event_owner = 'event_owner'
-    start_time = 'start_time'
-    )
+    name = 'name',
+    description = 'description',
+    expected_attendance = 'expected_attendance',
+    venue_id = 'venue_id',
+    event_owner = 'event_owner',
+    start_time = 'start_time')
 
 
 if __name__ == '__main__':
