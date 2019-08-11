@@ -6,11 +6,23 @@ from flask import Flask,render_template,request
 import pymysql
 import datetime
 
-## Connecting to the Google Cloud Database
-db_user = os.environ.get('CLOUD_SQL_USERNAME')
-db_password = os.environ.get('CLOUD_SQL_PASSWORD')
-db_name = os.environ.get('CLOUD_SQL_DATABASE_NAME')
-db_connection_name = os.environ.get('CLOUD_SQL_CONNECTION_NAME')
+# ## Connecting to the Google Cloud Database
+# db_user = os.environ.get('CLOUD_SQL_USERNAME')
+# db_password = os.environ.get('CLOUD_SQL_PASSWORD')
+# db_name = os.environ.get('CLOUD_SQL_DATABASE_NAME')
+# db_connection_name = os.environ.get('CLOUD_SQL_CONNECTION_NAME')
+
+import mysql.connector
+
+config = {
+  'user': 'root',
+  'password': 'root',
+  'host': 'localhost:3306',
+  'database': 'testing',
+  'raise_on_warnings': True,
+}
+
+link = mysql.connector.connect(**config)
 
 app = Flask(__name__)
 
@@ -23,11 +35,13 @@ def login():
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
-    if os.environ.get('GAE_ENV') == 'standard':
-        # If deployed, use the local socket interface for accessing Cloud SQL
-        unix_socket = '/cloudsql/{}'.format(db_connection_name)
-        cnx = pymysql.connect(user=db_user, password=db_password,
-                              unix_socket=unix_socket, db=db_name)
+    # if os.environ.get('GAE_ENV') == 'standard':
+    #     # If deployed, use the local socket interface for accessing Cloud SQL
+    #     unix_socket = '/cloudsql/{}'.format(db_connection_name)
+    #     cnx = pymysql.connect(user=db_user, password=db_password,
+    #                           unix_socket=unix_socket, db=db_name)
+
+    cnx = mysql.connector.connect(**config)
     
     with cnx.cursor() as cur: 
         cur.execute("SELECT * FROM users")
