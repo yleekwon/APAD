@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <title> DISPLAY TIMESLOT AVAILABILITY AT A VENUE </title>
+   <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  <body>
+    <div id="container">
+      <div class="pagetitle">
+        <h1>DISPLAY TIMESLOT AVAILABILITY AT A VENUE</h1>
+      </div>
+      <div id="main">
+        <form method="post" action="{{ url_for('open_venuetimeslot') }}">
+          
+          <label for="venue_id"> Venue ID: </label>
+          <input type="text" name="venue_id"> <br />
+          
+          <input type="submit">
+          <br> <br> <br>
+          {% for table in tables %}
+            {{titles[loop.index]}}
+            {{ table|safe }}
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

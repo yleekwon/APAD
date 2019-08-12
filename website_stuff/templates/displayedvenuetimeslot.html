@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DISPLAY TIMESLOT AVAILABILITY AT A VENUE</title>
+</head>
+<body>
+	Free times for this venue are:
+	{{num}}
+	<br> <br> <br> <br>
+
+	{% for table in tables %}
+	    {{titles[loop.index]}}
+	    {{ table|safe }}
+	{% endfor %}
+
+
+</body>
+</html>

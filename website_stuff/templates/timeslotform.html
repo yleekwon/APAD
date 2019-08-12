@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title> Display all venues where a particular timeslot is available </title>
+   <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  <body>
+    <div id="container">
+      <div class="pagetitle">
+        <h1>Display all venues where a particular timeslot is available</h1>
+      </div>
+      <div id="main">
+        <form method="post" action="{{ url_for('displayedtimeslot') }}">
+          
+          <label for="time"> Time: </label>
+          <input type="text" name="time"> <br />
+          
+          <input type="submit">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
