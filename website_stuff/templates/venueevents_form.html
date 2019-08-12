@@ -2,12 +2,13 @@
 
 <html>
   <head>
-    <title> USER FORM</title>
+    <title> DISPLAYED EVENTS</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700" rel="stylesheet">
+
 
     <style>
 
@@ -175,11 +176,54 @@
             position: relative;
         }
 
-        #wrapper.toggled #page-content-wrapper {
+         table.dataframe {
+          width: 100%;
+          border: none;
+          border-bottom: 1px solid #C8C8C8;
+          border-collapse: collapse;
+          text-align:center;
+          padding: 10px;
+          margin-bottom: 40px;
+          font-size: 0.9em;
+          padding: 8px;
+        }
+
+        .dataframe td {
+          border: none;
+          border-bottom: 1px solid #C8C8C8;
+          border-collapse: collapse;
+          text-align:center;
+          padding: 10px;
+          margin-bottom: 40px;
+          font-size: 0.9em;
+          padding: 8px;
+        }
+        .dataframe th {
+          border: none;
+          border-bottom: 1px solid #C8C8C8;
+          border-collapse: collapse;
+          text-align:center;
+          padding: 10px;
+          margin-bottom: 40px;
+          font-size: 0.9em;
+          background-color: #BEBEBE;
+        }
+
+        tr:nth-child(odd) {
+         background-color:#eee; 
+        }
+        
+        tr:nth-child(even) {
+          background-color:#fff; 
+        }
+
+        tr:hover { 
+          background-color:#ffa64d ;
+        }
     </style>
   </head>
    
-  <div id="wrapper">
+<div id="wrapper">
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav" >
             <li class="sidebar-brand">
@@ -203,50 +247,43 @@
         </ul>
     </div>
     <!-- /#sidebar-wrapper -->
-
-    <!-- Page Content -->
+  
     <div id="page-content-wrapper">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                  <h1> ADD USER </h1>
-                    <p> 
-                      As an admin, you are allowed to add a new user into the database. This will allow them to login into this web page and create events.   <br> <br> 
-                      <form method="post" action="{{ url_for('usersubmitted') }}">
-                        <div class="col-md-2"> </div><div class="col-md-2"> <label for="name">NAME:</label> </div>
-                        <input type="text" size="35" name="name"><br/>
-                        
-                        <div class="col-md-2"> </div><div class="col-md-2"> <label for="phone">PHONE:</label> </div>
-                        <input type="text" name="phone" size="35"><br/>
+          <div class="row">
+            <div class="col-lg-12">
+              <h1> EVENTS AT A VENUE AT A CERTAIN TIME</h1>
+                <p>
+                  Here you can find what events are going on in a certain venue at a particular time. Please input the appropriate venue ID and time in which you want to find your event  <br> <br> 
+                    <form method="post" action="{{ url_for('displayvenue') }}">
+                      <div class="col-md-2"> </div><div class="col-md-2"> 
+                        <label for="venue_id">VENUE_ID:</label> </div>
+                      <input type="text" size="35" name="venue_id"><br/>
+                      
+                      <div class="col-md-2"> </div><div class="col-md-2"> 
+                        <label for="time">TIME:</label> </div>
+                      <input type="text" name="time" size="35"><br />
 
+                      <div class="col-lg-5"> </div><div class = "col-md-5">  <br> 
 
-                        <div class="col-md-2"> </div><div class="col-md-2"> <label for="email">EMAIL:</label> </div>
-                        <input type="email" name="email" size="35"><br />
-
-                        <div class="col-md-2"> </div><div class="col-md-2"><label for="EID">EID:</label></div>
-                        <input type="text" name="EID" size="35"><br />
-
-                        <div class="col-md-2"> </div><div class="col-md-2"><label for="admin">ADMIN:</label> </div>
-                        <input type="text" name="admin" size="35"><br /> 
-
-                        <br> 
-
-                        <div class="col-lg-5"> </div><div class = "col-md-5"> 
-
-                          <button class="btn btn-primary btn-md align-self-end btn-block" style="max-width: 40%; background-color: #b34a00; border: none;" type="submit">
-                            <i class="fas fa-magic"> SUBMIT </i> 
-                          </button>
-                        </div>
-                      </form>
-
-                  
-                    </p>
-                </div>
+                        <button class="btn btn-primary btn-md align-self-end btn-block" style="max-width: 40%; background-color: #b34a00; border: none;" type="submit">
+                          <i class="fas fa-magic"> SUBMIT </i> 
+                        </button>
+                      </div>
+                    </form>
+                    <br> <br> <br>
+                    {% for table in tables %}
+                        {{ table|safe }}
+                    {% endfor %}
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </html>
+  </div>
+</html>
+
+
 

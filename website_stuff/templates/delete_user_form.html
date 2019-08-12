@@ -204,49 +204,40 @@
     </div>
     <!-- /#sidebar-wrapper -->
 
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                  <h1> ADD USER </h1>
-                    <p> 
-                      As an admin, you are allowed to add a new user into the database. This will allow them to login into this web page and create events.   <br> <br> 
-                      <form method="post" action="{{ url_for('usersubmitted') }}">
-                        <div class="col-md-2"> </div><div class="col-md-2"> <label for="name">NAME:</label> </div>
-                        <input type="text" size="35" name="name"><br/>
-                        
-                        <div class="col-md-2"> </div><div class="col-md-2"> <label for="phone">PHONE:</label> </div>
-                        <input type="text" name="phone" size="35"><br/>
+      <head>
+         <title>Delete a user</title>
+         <div id="page-content-wrapper">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-lg-12">
+                     <h1>DELETE A USER FORM</h1>
+                        <p>
+                           As an admin, you are allowed to add a new user into the database. This will allow them to login into this web page and create events. <br>
 
+                           {% if error %}
+                           <p><strong>Error: {{ error }} </strong> </p>
+                           {% endif %}
+                           <br>
 
-                        <div class="col-md-2"> </div><div class="col-md-2"> <label for="email">EMAIL:</label> </div>
-                        <input type="email" name="email" size="35"><br />
+                           <form method="post" action="{{ url_for('deleted_form') }}">
 
-                        <div class="col-md-2"> </div><div class="col-md-2"><label for="EID">EID:</label></div>
-                        <input type="text" name="EID" size="35"><br />
+                              <div class="col-md-2"> </div><div class="col-md-2"> <label for="email">EMAIL:</label> </div>
+                              <input type="email" name="email" size="35"><br />
 
-                        <div class="col-md-2"> </div><div class="col-md-2"><label for="admin">ADMIN:</label> </div>
-                        <input type="text" name="admin" size="35"><br /> 
+                              <div class="col-md-2"> </div><div class="col-md-2"><label for="EID">EID:</label></div>
+                              <input type="text" name="EID" size="35"><br /> <br>
 
-                        <br> 
-
-                        <div class="col-lg-5"> </div><div class = "col-md-5"> 
-
-                          <button class="btn btn-primary btn-md align-self-end btn-block" style="max-width: 40%; background-color: #b34a00; border: none;" type="submit">
-                            <i class="fas fa-magic"> SUBMIT </i> 
-                          </button>
-                        </div>
-                      </form>
-
-                  
-                    </p>
-                </div>
-              </div>
+                              <div class="col-lg-5"> </div><div class = "col-md-5"> 
+                                <button class="btn btn-primary btn-md align-self-end btn-block" style="max-width: 40%; background-color: #b34a00; border: none;" type="submit">
+                                  <i class="fas fa-magic"> SUBMIT </i> 
+                                </button>
+                              </div>
+                           </form>
+                        </p>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </html>
-
+         </div>
+   </div>
+</html>

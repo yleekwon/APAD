@@ -457,10 +457,12 @@ def submitted_venue():
 
 @app.route('/addevent')
 def main3():
-    return render_template('event_form.html')
+    cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+    df = pd.read_sql_query("SELECT * FROM venues", cnx)
+    return render_template('event_form.html', tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values )
 
 @app.route('/eventsubmitted', methods=['POST'])
-def submitted_event():
+def eventsubmitted():
     name = request.form['name']
     description = request.form['description']
     expected_attendance = request.form['expected-attendance']
@@ -522,12 +524,12 @@ def submitted_event():
 
     return render_template(
     'eventsubmitted.html',
-    name = 'name',
-    description = 'description',
-    expected_attendance = 'expected_attendance',
-    venue_id = 'venue_id',
-    event_owner = 'event_owner',
-    start_time = 'start_time')
+    name = name,
+    description = description,
+    expected_attendance = expected_attendance,
+    venue_id = venue_id,
+    event_owner = event_owner,
+    start_time = start_time)
 
 ## Display timeslot availability at a venue
 @app.route('/venuetimeslot')
@@ -535,7 +537,7 @@ def menu4():
     cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
     cursor = cnx.cursor()
     df = pd.read_sql_query("SELECT * FROM venues", cnx)
-    return render_template("venuetimeslot_form.html", tables=[df.to_html(classes='data')], titles=df.columns.values)
+    return render_template("venuetimeslot_form.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
 
 @app.route('/displayedvenuetimeslot', methods=['POST'])
 def open_venuetimeslot():
@@ -552,7 +554,7 @@ def open_venuetimeslot():
     print (num)
 
     df = pd.read_sql_query("SELECT * FROM Time", cnx)
-    return render_template("displayedvenuetimeslot.html", tables=[df.to_html(classes='data')], titles=df.columns.values, num=num)
+    return render_template("displayedvenuetimeslot.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values, num=num)
 
 ## Display all venues where a particular timeslot is available¶
 @app.route('/timeslotform')
@@ -581,14 +583,166 @@ def displayedtimeslot():
         sql1 = "SELECT bldg_code, floor_num, room_num FROM venues WHERE venue_id = %s"
         cursor.execute(sql1, (x,) )
         row1 = cursor.fetchall()
-        num1 = list(sum(row1, ()))
+        num1 = tuple(sum(row1, ()))
 
-        for i in num1:
-            availableVenues.append(i)
+        print("THIS IS NUM1", num1, type(num1))
+
+        availableVenues.append(tuple(num1))
         print ("what is this?:",num1)
-        print("X", x)
 
     return render_template("displayedtimeslot.html", num1=availableVenues)
+
+@app.route('/joinform')
+def joinform():
+    cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+    cursor = cnx.cursor()
+    df = pd.read_sql_query("SELECT * FROM events", cnx)
+    return render_template("joinform.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
+
+@app.route('/joinsubmitted', methods=['POST'])
+def joinsubmitted():
+    cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+    cursor = cnx.cursor()
+
+    EID = request.form['EID']
+    event_id = request.form['event_id']
+
+    sql = "SELECT user_id FROM users WHERE EID = %s"
+    cursor.execute(sql, (EID,))
+    row = cursor.fetchall()
+    num = list(sum(row, ()))
+    print("NUM",num)
+    
+    current_sql= "SELECT current_attendance FROM events WHERE event_id = %s"
+    cursor.execute(current_sql,(event_id,))
+    cur =  cursor.fetchall()
+    print("CUR", cur, cur[0])
+    
+    total_sql= "SELECT expected_attendance FROM events WHERE event_id = %s"
+    cursor.execute(total_sql,(event_id,))
+    tot = cursor.fetchall()
+    print("TOT", tot, tot[0])
+    
+    if cur[0] < tot[0]:
+        sd = []
+        for element in num:
+            stopDuplicates = "SELECT * FROM confirmedEvents WHERE user_id = %s AND event_id = %s"
+            cursor.execute(stopDuplicates, (element, event_id,))
+            sd = cursor.fetchall()
+            print("SD", sd)
+            print("ELEMENT", element)
+
+            if len(sd)==0:
+                sql1 = "INSERT INTO confirmedEvents(user_id, event_id) VALUES (%s, %s) "
+                cursor.execute(sql1, (element, event_id,))
+                updateCount = "UPDATE events SET current_attendance = current_attendance + 1 WHERE event_id = %s"
+                cursor.execute(updateCount, (event_id,))
+                cnx.commit()
+            else:
+                raise Exception('Error: This user is already going to this event')
+    else:
+        raise Exception('Error: Event is fully booked')
+
+    df = pd.read_sql_query("SELECT * FROM events", cnx)
+
+    return render_template("joinsubmitted.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values, EID=EID, event_id=event_id)
+
+@app.route('/venueevents')
+def menu6():
+    # if os.environ.get('GAE_ENV') == 'standard':
+    #     unix_socket = '/cloudsql/{}'.format(db_connection_name)
+    #     cnx = pymysql.connect(user=db_user, password=db_password,
+    #                           unix_socket=unix_socket, db=db_name)
+    # else:
+    host = '127.0.0.1'
+    cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+
+    cursor = cnx.cursor()
+    df = pd.read_sql_query("SELECT * FROM venues", cnx)
+    return render_template("venueevents_form.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
+
+@app.route('/displayvenue', methods=['POST'])
+def displayvenue():
+    # if os.environ.get('GAE_ENV') == 'standard':
+    #     unix_socket = '/cloudsql/{}'.format(db_connection_name)
+    #     cnx = pymysql.connect(user=db_user, password=db_password,
+    #                           unix_socket=unix_socket, db=db_name)
+    # else:
+    host = '127.0.0.1'
+    cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+    cursor = cnx.cursor()
+    myEID = session.get('myEID')
+
+    print("THIS IS MY EID", myEID)
+    venue_id = request.form['venue_id']
+    time = request.form['time']
+
+    sql =  "SELECT event_id FROM Time WHERE venue_id= %s AND timeslot = %s"
+    
+    cursor.execute(sql, (venue_id, time,))    
+    row = cursor.fetchall()
+    num = list(sum(row, ()))
+    #print ("Events in %s %i.%i at %s:" % (bldg_code,floor_num,room_num,time))
+
+    stuff = []
+
+    for element in num:
+        sql1 = "SELECT * FROM events WHERE event_id = %s"
+        cursor.execute(sql1, (element,) )
+        row1 = cursor.fetchall()
+        num1 = tuple(sum(row1, ()))
+
+        stuff.append(tuple(num1))
+    df = pd.read_sql_query("SELECT * FROM events", cnx)
+    return render_template("displayedevents.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values, row1=stuff)
+
+@app.route('/deleteuser')
+def deletemain():
+    return render_template('delete_user_form.html')
+
+## Add user - submitted form 
+@app.route('/userdeleted', methods=['POST'])
+def deleted_form():
+    email = request.form['email']
+    EID = request.form['EID']
+
+    myEID = session.get('myEID')
+    print("THIS IS MY EID", myEID)
+
+    if len(EID) != 7:
+        return ("INVALID EID. PLEASE TRY AGAIN!")
+    else:
+        host = '127.0.0.1'
+        cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+        cursor = cnx.cursor()
+
+        userCheck = cursor.execute('SELECT * FROM users WHERE EID = %s AND email = %s', (EID, email))
+        entry = cursor.fetchall()
+        
+        num = list(entry)
+        if len(num)==0:
+            error = 'Invalid credentials'
+            return render_template('delete_user_form.html', error=error)
+        else:
+            
+            myEID = session.get('myEID')
+            print("THIS IS MY EID", myEID)
+
+            userCheck = cursor.execute('SELECT * from users where EID = %s', (myEID,))
+            entry = cursor.fetchall()
+       
+
+            tuplefromList = [x[5] for x in entry]
+            adminCheck = tuplefromList[0]
+            
+            if adminCheck == 1:
+                cursor.execute('DELETE FROM users WHERE EID = %s', (EID,))
+                cnx.commit()
+                adminError = None
+            else:  
+                adminError = 'You are not allowed to perform this action!'
+                return render_template('login_index.html', adminError=adminError)
+        return render_template('user_deleted_form.html', email=email,EID=EID)
 
 if __name__ == '__main__':
     # app.run(host='127.0.0.1', port=8080, debug=True)
