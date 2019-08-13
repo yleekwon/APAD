@@ -190,7 +190,7 @@ def main3():
     else:
         host = '127.0.0.1'
         cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
-    cursor = cnx.cursor()
+    cursor = cnx.cursor()    
     df = pd.read_sql_query("SELECT * FROM venues", cnx)
     return render_template('event_form.html', tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values )
 
@@ -211,10 +211,8 @@ def eventsubmitted():
                               unix_socket=unix_socket, db=db_name)
     else:
         host = '127.0.0.1'
-        cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
-   
-    cursor = cnx.cursor()
-
+        cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")      
+    cursor = cnx.cursor()    
     infoGrab = cursor.execute('SELECT * FROM venues WHERE venue_id = %s', (venue_id,))
     entry = cursor.fetchall()
 
@@ -257,11 +255,9 @@ def eventsubmitted():
             cursor.execute(updateCount, (eventID,))
             
         else:
-            adminError = 'Error: Room already booked for that time'
-            return render_template('login_index.html', adminError=adminError)
+            raise Exception('Error: Room already booked for that time')
     else:
-        adminError = 'ERROR: Room capacity exceeded'
-        return render_template('login_index.html', adminError=adminError)
+        raise Exception('ERROR: Room capacity exceeded')
     cnx.commit()
 
     return render_template(
@@ -272,7 +268,6 @@ def eventsubmitted():
     venue_id = venue_id,
     event_owner = event_owner,
     start_time = start_time)
-
 ## Display timeslot availability at a venue
 @app.route('/venuetimeslot')
 def menu4():
@@ -570,7 +565,7 @@ def deleted_form1():
     if adminCheck == 1:
         events_sql = ('DELETE FROM events WHERE event_id = %s')
         cs_sql = ('DELETE FROM confirmedEvents WHERE event_id = %s')
-        time_sql = ('DELETE FROM TIME WHERE event_id = %s')
+        time_sql = ('DELETE FROM Time WHERE event_id = %s')
         cursor.execute(events_sql, (event_id,))
         cursor.execute(cs_sql, (event_id,))
         cursor.execute(time_sql, (event_id,))

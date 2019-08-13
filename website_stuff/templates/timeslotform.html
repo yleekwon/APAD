@@ -2,13 +2,12 @@
 
 <html>
   <head>
-    <title> USER SUBMITTED </title>
+    <title> Display all venues where a particular timeslot is available </title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700" rel="stylesheet">
-
 
     <style>
 
@@ -53,7 +52,7 @@
 /*      h1, h2, h3, h4, h5, h6 {
         color: #000;
         font-family: "Playfair Display", Georgia, serif;
-        font-weight: 400;
+        font-weight: 600;
         margin: 0 0 30px 0; 
       }*/
 
@@ -176,11 +175,54 @@
             position: relative;
         }
 
-        #wrapper.toggled #page-content-wrapper {
+        table.dataframe {
+          width: 100%;
+          border: none;
+          border-bottom: 1px solid #C8C8C8;
+          border-collapse: collapse;
+          text-align:center;
+          padding: 10px;
+          margin-bottom: 40px;
+          font-size: 0.9em;
+          padding: 8px;
+        }
+
+        .dataframe td {
+          border: none;
+          border-bottom: 1px solid #C8C8C8;
+          border-collapse: collapse;
+          text-align:center;
+          padding: 10px;
+          margin-bottom: 40px;
+          font-size: 0.9em;
+          padding: 8px;
+        }
+        .dataframe th {
+          border: none;
+          border-bottom: 1px solid #C8C8C8;
+          border-collapse: collapse;
+          text-align:center;
+          padding: 10px;
+          margin-bottom: 40px;
+          font-size: 0.9em;
+          background-color: #BEBEBE;
+        }
+
+        tr:nth-child(odd) {
+         background-color:#eee; 
+        }
+        
+        tr:nth-child(even) {
+          background-color:#fff; 
+        }
+
+        tr:hover { 
+          background-color:#ffa64d ;
+        }
     </style>
   </head>
    
-<div id="wrapper">
+  <div id="wrapper">
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav" >
             <li class="sidebar-brand">
@@ -201,8 +243,6 @@
             <li><a href="venueevents" > LIST EVENTS AT A VENUE </a></li>
             <li><a href="joinform" > JOIN AN EVENT </a></li>
             <li><a href="deleteuser" > REMOVE A USER </a></li>
-            <li><a href="deleteevent" > REMOVE AN EVENT </a></li>
-
         </ul>
     </div>
     <!-- /#sidebar-wrapper -->
