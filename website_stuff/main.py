@@ -2,7 +2,7 @@ import os
 import mysql.connector
 import mysql.connector
 import pymysql
-from flask import Flask,render_template,request,session
+from flask import Flask,render_template,request,session, jsonify
 import datetime
 import pandas as pd
 
@@ -22,7 +22,7 @@ app.secret_key = "iloveyou3000"
 def login():
     return render_template('login.html')
 
-@app.route('/login_index', methods=['POST'])
+@app.route('/login_index', methods=['GET', 'POST'])
 def login_index():
     if os.environ.get('GAE_ENV') == 'standard':
         unix_socket = '/cloudsql/{}'.format(db_connection_name)
@@ -56,7 +56,10 @@ def login_index():
     
     cnx.commit()
     cnx.close()
-    return render_template('login_index.html', admin = myAdmin)
+    if request.user_agent.platform == "windows":
+    	return render_template('login_index.html', admin = myAdmin)
+    elif request.user_agent.platform == "android":
+        return jsonify(entry) # Takes the users result from Query and jsonifies it
 
 
 ## Add user - form 
@@ -65,7 +68,7 @@ def main1():
     return render_template('user_form.html')
 
 ## Add user - submitted form 
-@app.route('/usersubmitted', methods=['POST'])
+@app.route('/usersubmitted', methods=['GET', 'POST'])
 def usersubmitted():
     name = request.form['name']
     email = request.form['email']
@@ -104,13 +107,16 @@ def usersubmitted():
         else:  
             adminError = 'You are not allowed to perform this action!'
             return render_template('login_index.html', adminError=adminError)
-    return render_template('usersubmitted.html', name=name,email=email, phone=phone, EID=EID,admin=admin)
+    if request.user_agent.platform == "windows":
+    	return render_template('usersubmitted.html', name=name,email=email, phone=phone, EID=EID,admin=admin)
+    elif request.user_agent.platform == "android":
+        return jsonify(entry) # Takes the users result from Query and jsonifies it
 
 @app.route('/addvenue')
 def main2():
     return render_template('venue_form.html')
 
-@app.route('/venuesubmitted', methods=['POST'])
+@app.route('/venuesubmitted', methods=['GET', 'POST'])
 def submitted_venue():
     bldg_code = request.form['bldg_code']
     floor_num = request.form['floor_num']
@@ -174,12 +180,15 @@ def submitted_venue():
     cnx.commit()
     cnx.close()
 
-    return render_template(
-    'venuesubmitted.html',
-    bldg_code = bldg_code,
-    floor_num = floor_num,
-    room_num = room_num,
-    room_capacity = room_capacity)
+    if request.user_agent.platform == "windows":
+    	return render_template(
+	    'venuesubmitted.html',
+	    bldg_code = bldg_code,
+	    floor_num = floor_num,
+	    room_num = room_num,
+	    room_capacity = room_capacity)
+    elif request.user_agent.platform == "android":
+        return jsonify(entry) # Takes the users result from Query and jsonifies it
 
 @app.route('/addevent')
 def main3():
@@ -194,7 +203,7 @@ def main3():
     df = pd.read_sql_query("SELECT * FROM venues", cnx)
     return render_template('event_form.html', tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values )
 
-@app.route('/eventsubmitted', methods=['POST'])
+@app.route('/eventsubmitted', methods=['GET', 'POST'])
 def eventsubmitted():
     name = request.form['name']
     description = request.form['description']
@@ -268,6 +277,9 @@ def eventsubmitted():
     venue_id = venue_id,
     event_owner = event_owner,
     start_time = start_time)
+
+
+
 ## Display timeslot availability at a venue
 @app.route('/venuetimeslot')
 def menu4():
@@ -283,7 +295,7 @@ def menu4():
     df = pd.read_sql_query("SELECT * FROM venues", cnx)
     return render_template("venuetimeslot_form.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
 
-@app.route('/displayedvenuetimeslot', methods=['POST'])
+@app.route('/displayedvenuetimeslot', methods=['GET', 'POST'])
 def open_venuetimeslot():
 
     if os.environ.get('GAE_ENV') == 'standard':
@@ -313,7 +325,7 @@ def open_venuetimeslot():
 def menu5():
     return render_template("timeslotform.html")
 
-@app.route('/displayedtimeslot', methods=['POST'])
+@app.route('/displayedtimeslot', methods=['GET', 'POST'])
 def displayedtimeslot():
 
     if os.environ.get('GAE_ENV') == 'standard':
@@ -367,7 +379,7 @@ def joinform():
     df = pd.read_sql_query("SELECT * FROM events", cnx)
     return render_template("joinform.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
 
-@app.route('/joinsubmitted', methods=['POST'])
+@app.route('/joinsubmitted', methods=['GET', 'POST'])
 def joinsubmitted():
 
     if os.environ.get('GAE_ENV') == 'standard':
@@ -440,7 +452,7 @@ def menu6():
     df = pd.read_sql_query("SELECT * FROM venues", cnx)
     return render_template("venueevents_form.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
 
-@app.route('/displayvenue', methods=['POST'])
+@app.route('/displayvenue', methods=['GET', 'POST'])
 def displayvenue():
     if os.environ.get('GAE_ENV') == 'standard':
         unix_socket = '/cloudsql/{}'.format(db_connection_name)
@@ -481,7 +493,7 @@ def deletemain():
     return render_template('delete_user_form.html')
 
 ## Add user - submitted form 
-@app.route('/userdeleted', methods=['POST'])
+@app.route('/userdeleted', methods=['GET', 'POST'])
 def deleted_form():
     email = request.form['email']
     EID = request.form['EID']
@@ -536,7 +548,7 @@ def deleted_form():
 def deletemain1():
     return render_template('delete_event_form.html')
  
-@app.route('/eventdeleted', methods=['POST'])
+@app.route('/eventdeleted', methods=['GET', 'POST'])
 def deleted_form1():
     event_id = request.form['event_id']
 
