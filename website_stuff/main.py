@@ -500,13 +500,16 @@ def displayvenue():
         stuff.append(tuple(num1))
 	
     jstuff = json.dumps(stuff)
-    df = pd.read_sql_query(("SELECT * FROM events WHERE event_id = %s" % beep), cnx)
-
+    
     if request.user_agent.platform == "android":
         return jstuff
     else:
-        return render_template("displayedevents.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
-
+        if beep is not None:
+            df = pd.read_sql_query(("SELECT * FROM events WHERE event_id = %s" % beep), cnx)
+            return render_template("displayedevents.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
+        else:
+            lol = "There are no events at this time and venue."
+            return render_template("displayedevents.html", lol = lol)
 @app.route('/deleteuser')
 def deletemain():
     return render_template('delete_user_form.html')
