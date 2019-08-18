@@ -317,8 +317,13 @@ def open_venuetimeslot():
     print ("Free times for this venue are:")
     print (num)
 
-    df = pd.read_sql_query("SELECT * FROM Time", cnx)
-    return render_template("displayedvenuetimeslot.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values, num=num)
+    jnum = json.dumps(num)
+    
+    if request.user_agent.platform == "android":
+        return jnum
+    else:
+        df = pd.read_sql_query("SELECT * FROM Time", cnx)
+        return render_template("displayedvenuetimeslot.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values, num=num)
 
 ## Display all venues where a particular timeslot is available¶
 @app.route('/timeslotform')
@@ -361,8 +366,14 @@ def displayedtimeslot():
 
         availableVenues.append(tuple(num1))
         print ("what is this?:",num1)
+	
+    javailableVenues = json.dumps(availableVenues)
+    print(javailableVenues)
 
-    return render_template("displayedtimeslot.html", num1=availableVenues)
+    if request.user_agent.platform == "android":
+        return javailableVenues
+    else:
+        return render_template("displayedtimeslot.html", num1=availableVenues)
 
 @app.route('/joinform')
 def joinform():
@@ -478,15 +489,22 @@ def displayvenue():
 
     stuff = []
 
+    beep = num[0]
+
     for element in num:
         sql1 = "SELECT * FROM events WHERE event_id = %s"
         cursor.execute(sql1, (element,) )
         row1 = cursor.fetchall()
         num1 = tuple(sum(row1, ()))
-
         stuff.append(tuple(num1))
-    df = pd.read_sql_query("SELECT * FROM events", cnx)
-    return render_template("displayedevents.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values, row1=stuff)
+	
+    jstuff = json.dumps(stuff)
+    df = pd.read_sql_query(("SELECT * FROM events WHERE event_id = %s" % beep), cnx)
+
+    if request.user_agent.platform == "android":
+        return jstuff
+    else:
+        return render_template("displayedevents.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
 
 @app.route('/deleteuser')
 def deletemain():
