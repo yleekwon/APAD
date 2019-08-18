@@ -617,9 +617,9 @@ def showmetheusertable():
          unix_socket = '/cloudsql/{}'.format(db_connection_name)
          cnx = pymysql.connect(user=db_user, password=db_password,
                                unix_socket=unix_socket, db=db_name)
-    
-    host = '127.0.0.1'
-    cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+    else:
+    	host = '127.0.0.1'
+    	cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
    
     cursor = cnx.cursor() 
     result = cursor.execute("Select * from users")
