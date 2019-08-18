@@ -5,6 +5,7 @@ import pymysql
 from flask import Flask,render_template,request,session, jsonify
 import datetime
 import pandas as pd
+import json
 
 
 ## Connecting to the Google Cloud Database
