@@ -24,6 +24,9 @@ class NavigationFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.navigation_fragment, container, false)
 
+        view.join_events_button.setOnClickListener({
+            (activity as NavigationHost).navigateTo(joinEventsFragment(), false) })
+
         view.event_venue_button.setOnClickListener({
             (activity as NavigationHost).navigateTo(eventAtVenueFragment(), false) })
 

@@ -387,7 +387,7 @@ def joinform():
 # NEEDS TO BE FIXED BUT PUSHING FOR NOW
 @app.route('/joinsubmittedjson') 
 def joinsubmittedjson():
-     if os.environ.get('GAE_ENV') == 'standard':
+    if os.environ.get('GAE_ENV') == 'standard':
         unix_socket = '/cloudsql/{}'.format(db_connection_name)
         cnx = pymysql.connect(user=db_user, password=db_password,
                               unix_socket=unix_socket, db=db_name)
@@ -398,7 +398,9 @@ def joinsubmittedjson():
     
     data = request.get_json() 
     EID = data['EID']
+    print (EID)
     event_id = data['event_id']
+    print (event_id)
 
     sql = "SELECT user_id FROM users WHERE EID = %s"
     cursor.execute(sql, (EID,))
