@@ -39,20 +39,29 @@ class eventAtVenueFragment : Fragment() {
                     //iterate through the returned array of JSON objects
                     // and look for candiadate whose name we requested
                     println("here?")
-                    //val myList = mutableListOf<String>()
+                    val myList = mutableListOf<String>()
                     for (i in 0..(jsonarray.length() - 1)) {
                         val user = jsonarray.getJSONObject(i)
                         if(user.get("venue_id").toString() == txtsearchuser.text.toString()) {
                             println("wtf")
                             if(user.get("timeslot").toString() == txtsearchuser2.text.toString()) {
                                 println("wtf1")
-                                /*var x = user.get("event_id").toString()
+                                var x = user.get("event_id").toString()
                                 myList.add(x)
-                                println(myList)*/
-                                txtusername.text = user.get("event_id").toString()
+                                println(myList)
+                            }
+                            val eventList = mutableListOf<String>()
+                            for (i in 0..(jsonarray2.length() - 1)) {
+                                val venue = jsonarray2.getJSONObject(i)
+                                if(venue.get("event_id").toString() in myList){
+                                    var ven = venue.get("name").toString()
+                                    var ven1 = venue.get("description").toString()
+                                    var ven3 = ("%s: %s".format(ven, ven1))
+                                    eventList.add(ven3)
+                                }
                             }
 
-                            //txtusername.text = myList.toString()
+                            txtusername.text = eventList.toString()
                         }
                     }
                 }
@@ -78,7 +87,7 @@ class eventAtVenueFragment : Fragment() {
         return bodystr
     }
     private fun fetchInfo2(): String {
-        val url = "https://comehither.appspot.com/venuetable"
+        val url = "https://comehither.appspot.com/eventtable"
 
         val client = OkHttpClient()
         println("hi")

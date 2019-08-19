@@ -46,6 +46,7 @@ class freeVenueFragment : Fragment() {
                     val myList = mutableListOf<String>()
                     for (i in 0..(jsonarray.length() - 1)) {
                         val user = jsonarray.getJSONObject(i)
+
                         if(user.get("timeslot") == txtsearchuser.text.toString()) {
                             println("wtf")
                             (if(user.get("event_id").toString() == "empty"){
@@ -55,9 +56,18 @@ class freeVenueFragment : Fragment() {
                                 myList.add(x)
                                 println(myList)
                             })
-
-                            txtusername.text = myList.toString()
-
+                            val venueList = mutableListOf<String>()
+                            for (i in 0..(jsonarray2.length() - 1)) {
+                                val venue = jsonarray2.getJSONObject(i)
+                                if(venue.get("venue_id").toString() in myList){
+                                    var ven = venue.get("bldg_code").toString()
+                                    var ven1 = venue.get("floor_num").toString()
+                                    var ven2 = venue.get("room_num").toString()
+                                    var ven3 = ("%s %s.%s ".format(ven, ven1, ven2))
+                                    venueList.add(ven3)
+                                }
+                            }
+                            txtusername.text = venueList.toString()
                         }
                     }
                 }
