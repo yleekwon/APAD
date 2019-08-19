@@ -2,7 +2,7 @@ import os
 import mysql.connector
 import mysql.connector
 import pymysql
-from flask import Flask,render_template,request,session, jsonify
+from flask import Flask,render_template,request,session, jsonify, Response
 import datetime
 import pandas as pd
 import json
@@ -614,9 +614,9 @@ def deleted_form1():
 
 @app.route('/usertable', methods=['GET', 'POST'])
 def usertable():
-     if os.environ.get('GAE_ENV') == 'standard':
-         unix_socket = '/cloudsql/{}'.format(db_connection_name)
-         cnx = pymysql.connect(user=db_user, password=db_password,
+    if os.environ.get('GAE_ENV') == 'standard':
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        cnx = pymysql.connect(user=db_user, password=db_password,
                                unix_socket=unix_socket, db=db_name)
     else:
     	host = '127.0.0.1'
@@ -626,16 +626,18 @@ def usertable():
     result = cursor.execute("Select * from users")
     dd = cursor.fetchall()
     column = ["user_id", "name", "phone", "email", "EID", "admin"]
-     list =[]
+    list =[]
     
     for item in dd:
         hello = dict(zip(column, item))
         list.append(hello.copy())
     
-    jusers = json.dumps(list)
+    jusers = json.dumps(list).replace("null","empty")
+    #jusers = jsonify(list)
     print(jusers)
 
-    return jusers
+    return Response(jusers, mimetype='application/json')
+    
 @app.route('/eventtable', methods=['GET', 'POST'])
 def eventtable():
     if os.environ.get('GAE_ENV') == 'standard':
@@ -644,8 +646,8 @@ def eventtable():
                               unix_socket=unix_socket, db=db_name)
 
     else: 
-	host = '127.0.0.1'
-	cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+    	host = '127.0.0.1'
+    	cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
 
     cursor = cnx.cursor() 
     result = cursor.execute("Select * from events")
@@ -658,10 +660,40 @@ def eventtable():
         hello = dict(zip(column, item))
         list.append(hello.copy())
     
-    jevents = json.dumps(list)
+    jevents = json.dumps(list).replace("null","empty")
+    #jevents = jsonify(list)
+
     print(jevents)
 
-    return jevents
+
+    return Response(jevents, mimetype='application/json')
+
+@app.route('/venuetable', methods=['GET', 'POST'])
+def venuetable():
+    if os.environ.get('GAE_ENV') == 'standard':
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        cnx = pymysql.connect(user=db_user, password=db_password,
+                              unix_socket=unix_socket, db=db_name)
+    else:
+        host = '127.0.0.1'
+        cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+   
+    cursor = cnx.cursor() 
+    result = cursor.execute("Select * from venues")
+    dd = cursor.fetchall()
+    column = ["venue_id", "bldg_code", "floor_num", "room_num", "room_capacity","open_time","close_time"]
+    
+    list =[]
+    
+    for item in dd:
+        hello = dict(zip(column, item))
+        list.append(hello.copy())
+    
+    jvenue = json.dumps(list).replace("null","empty")
+    #jvenue = jsonify(list)
+
+    print(jvenue)
+    return Response(jvenue, mimetype='application/json')
 
 @app.route('/timetable', methods=['GET', 'POST'])
 def timetable():
@@ -684,13 +716,15 @@ def timetable():
         hello = dict(zip(column, item))
         list.append(hello.copy())
     
-    jtime = json.dumps(list)
-    print(jtime)
+    jtime = json.dumps(list).replace("null","empty")
+    #jtime = jsonify(list)
 
-    return jtime
+    print(jtime)
+    return Response(jtime, mimetype='application/json')
+
+
 
 
 if __name__ == '__main__':
     # app.run(host='127.0.0.1', port=8080, debug=True)
-
     app.run(host='localhost', debug=True)

@@ -63,7 +63,7 @@ class LoginFragment : Fragment(), AnkoLogger {
 
 
     private fun fetchInfo(): String {
-        val url = "https://comehither.appspot.com/showmetheusertable"
+        val url = "https://comehither.appspot.com/usertable"
 
         val client = OkHttpClient()
         println("pls")
