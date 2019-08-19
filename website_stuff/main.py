@@ -57,11 +57,8 @@ def login_index():
     
     cnx.commit()
     cnx.close()
-    if request.user_agent.platform == "windows":
-    	return render_template('login_index.html', admin = myAdmin)
-    elif request.user_agent.platform == "android":
-        return jsonify(entry) # Takes the users result from Query and jsonifies it
 
+    return render_template("login_index.html", admin = myAdmin)
 
 ## Add user - form 
 @app.route('/adduser')
@@ -108,11 +105,9 @@ def usersubmitted():
         else:  
             adminError = 'You are not allowed to perform this action!'
             return render_template('login_index.html', adminError=adminError)
-    if request.user_agent.platform == "windows":
-    	return render_template('usersubmitted.html', name=name,email=email, phone=phone, EID=EID,admin=admin)
-    elif request.user_agent.platform == "android":
-        return jsonify(entry) # Takes the users result from Query and jsonifies it
-
+    
+    return render_template('usersubmitted.html', name=name,email=email, phone=phone, EID=EID,admin=admin)
+    
 @app.route('/addvenue')
 def main2():
     return render_template('venue_form.html')
@@ -181,16 +176,14 @@ def submitted_venue():
     cnx.commit()
     cnx.close()
 
-    if request.user_agent.platform == "windows":
-    	return render_template(
+    
+    return render_template(
 	    'venuesubmitted.html',
 	    bldg_code = bldg_code,
 	    floor_num = floor_num,
 	    room_num = room_num,
 	    room_capacity = room_capacity)
-    elif request.user_agent.platform == "android":
-        return jsonify(entry) # Takes the users result from Query and jsonifies it
-
+  
 @app.route('/addevent')
 def main3():
     if os.environ.get('GAE_ENV') == 'standard':
