@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <Button
+            android:text="Join Events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/join_events_button"/>
+    <Button
+            android:text="Free Venues"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/free_venues_button"/>
+    <Button
+            android:text="Free Times"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/free_times_button"/>
+    <Button
+            android:text="Events at Venue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/event_venue_button"/>
+    <Button
+            android:text="logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/logout_button"/>
+
+</LinearLayout>
