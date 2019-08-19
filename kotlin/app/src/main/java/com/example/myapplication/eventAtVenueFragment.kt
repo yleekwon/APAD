@@ -56,12 +56,14 @@ class eventAtVenueFragment : Fragment() {
                                 if(venue.get("event_id").toString() in myList){
                                     var ven = venue.get("name").toString()
                                     var ven1 = venue.get("description").toString()
-                                    var ven3 = ("%s: %s".format(ven, ven1))
+                                    var ven3 = ("%s: %s \n".format(ven, ven1))
                                     eventList.add(ven3)
                                 }
                             }
 
-                            txtusername.text = eventList.toString()
+                            txtusername.text = eventList.toString().replace(",", "")  //remove the commas
+                                .replace("[", "")  //remove the right bracket
+                                .replace("]", "")  //remove the left bracket
                         }
                     }
                 }

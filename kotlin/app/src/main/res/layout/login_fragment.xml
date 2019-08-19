@@ -28,7 +28,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintVertical_bias="0.402"
-            app:layout_constraintHorizontal_bias="0.498" android:backgroundTint="#2196F3"/>
+            app:layout_constraintHorizontal_bias="0.498" android:backgroundTint="#FF5722"/>
 
     <TextView
             android:id="@+id/error_text"
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintVertical_bias="0.48" android:textColor="#FF0000"/>
     <TextView
-            android:text="EMAIL:"
+            android:hint="EMAIL:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -51,7 +51,7 @@
             android:id="@+id/username_label" app:layout_constraintHorizontal_bias="0.183"
             app:layout_constraintVertical_bias="0.226"/>
     <TextView
-            android:text="EID:"
+            android:hint="EID:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,7 +69,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/username_text" app:layout_constraintHorizontal_bias="0.777"
-            app:layout_constraintVertical_bias="0.215" android:textColorLink="#2196F3"
+            app:layout_constraintVertical_bias="0.215" android:textColorLink="#FF5722"
             android:textCursorDrawable="@color/colorAccent"/>
     <EditText
             android:layout_width="wrap_content"

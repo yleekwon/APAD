@@ -63,11 +63,13 @@ class freeVenueFragment : Fragment() {
                                     var ven = venue.get("bldg_code").toString()
                                     var ven1 = venue.get("floor_num").toString()
                                     var ven2 = venue.get("room_num").toString()
-                                    var ven3 = ("%s %s.%s ".format(ven, ven1, ven2))
+                                    var ven3 = ("%s %s.%s \n".format(ven, ven1, ven2))
                                     venueList.add(ven3)
                                 }
                             }
-                            txtusername.text = venueList.toString()
+                            txtusername.text = venueList.toString().replace(",", "")  //remove the commas
+                                .replace("[", "")  //remove the right bracket
+                                .replace("]", "")  //remove the left bracket
                         }
                     }
                 }

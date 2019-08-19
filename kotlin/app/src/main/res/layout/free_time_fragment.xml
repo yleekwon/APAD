@@ -12,7 +12,7 @@
             android:layout_marginTop="30dp"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Name"
+            android:hint="Venue_id"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     <TextView
@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:text="Available times at this venue:"
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="@+id/txtsearchuser"
             app:layout_constraintTop_toBottomOf="@+id/txtsearchuser" />

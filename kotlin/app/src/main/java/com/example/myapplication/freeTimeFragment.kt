@@ -52,7 +52,8 @@ class freeTimeFragment : Fragment() {
                                 //txtusername.text = user.get("timeslot").toString()
                             })
 
-                            txtusername.text = myList.toString()
+                            txtusername.text = myList.toString().replace("[", "")  //remove the right bracket
+                                .replace("]", "")  //remove the left bracket
                         }
                     }
                 }
