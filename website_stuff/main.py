@@ -384,6 +384,65 @@ def joinform():
     df = pd.read_sql_query("SELECT * FROM events", cnx)
     return render_template("joinform.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
 
+# NEEDS TO BE FIXED BUT PUSHING FOR NOW
+@app.route('/joinsubmittedjson') 
+def joinsubmittedjson():
+     if os.environ.get('GAE_ENV') == 'standard':
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        cnx = pymysql.connect(user=db_user, password=db_password,
+                              unix_socket=unix_socket, db=db_name)
+    else:
+        host = '127.0.0.1'
+        cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+
+    
+    data = request.get_json() 
+    EID = data['EID']
+    event_id = data['event_id']
+
+    sql = "SELECT user_id FROM users WHERE EID = %s"
+    cursor.execute(sql, (EID,))
+    row = cursor.fetchall()
+    num = list(sum(row, ()))
+    print("NUM",num)
+    
+    current_sql= "SELECT current_attendance FROM events WHERE event_id = %s"
+    cursor.execute(current_sql,(event_id,))
+    cur =  cursor.fetchall()
+    print("CUR", cur, cur[0])
+    
+    total_sql= "SELECT expected_attendance FROM events WHERE event_id = %s"
+    cursor.execute(total_sql,(event_id,))
+    tot = cursor.fetchall()
+    print("TOT", tot, tot[0])
+    
+    if cur[0] < tot[0]:
+        sd = []
+        for element in num:
+            stopDuplicates = "SELECT * FROM confirmedEvents WHERE user_id = %s AND event_id = %s"
+            cursor.execute(stopDuplicates, (element, event_id,))
+            sd = cursor.fetchall()
+            print("SD", sd)
+            print("ELEMENT", element)
+
+            if len(sd)==0:
+                sql1 = "INSERT INTO confirmedEvents(user_id, event_id) VALUES (%s, %s) "
+                cursor.execute(sql1, (element, event_id,))
+                updateCount = "UPDATE events SET current_attendance = current_attendance + 1 WHERE event_id = %s"
+                cursor.execute(updateCount, (event_id,))
+                cnx.commit()
+            else:
+                adminError = 'Error: This user is already going to this event'
+                return render_template('login_index.html', adminError=adminError)
+    else:
+        adminError = 'Error: Event is fully booked'
+        return render_template('login_index.html', adminError=adminError)
+
+    df = pd.read_sql_query("SELECT * FROM events", cnx)
+
+    return render_template("joinsubmitted.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values, EID=EID, event_id=event_id)
+
+
 @app.route('/joinsubmitted', methods=['GET', 'POST'])
 def joinsubmitted():
 
