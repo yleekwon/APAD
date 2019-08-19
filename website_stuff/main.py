@@ -19,6 +19,14 @@ global myEID
 app = Flask(__name__)
 app.secret_key = "iloveyou3000"
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/info')
+def info():
+    return render_template('info.html')
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     return render_template('login.html')

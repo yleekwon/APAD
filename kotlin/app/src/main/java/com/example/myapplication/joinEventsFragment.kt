@@ -35,21 +35,22 @@ class joinEventsFragment : Fragment(){
         val view = inflater.inflate(R.layout.join_events_fragment, container, false)
 
         view.back_button.setOnClickListener({
-            (activity as NavigationHost).navigateTo(LoginFragment(), false)
+            (activity as NavigationHost).navigateTo(NavigationFragment(), false)
         })
 
         view.button.setOnClickListener {
             doAsync {
                 println("this should werk")
-                fetchInfo()
+                fetchInfo(txtsearchuser.toString(),txtsearchuser2.toString())
                 println("did I work?")
-                txtusername.text = "Event was joined"
+                txtusername.text = "Joined event"
             }
         }
         return view
     }
 
-    private fun fetchInfo(): String {
+    private fun fetchInfo(txtsearchuser: String?,txtsearchuser2: String? ): String {
+
         val url = "https://comehither.appspot.com/joinsubmittedjson"
         val json = """
                     {
@@ -65,9 +66,8 @@ class joinEventsFragment : Fragment(){
             .build()
         println("working?")
         val response = client.newCall(request).execute()
-        println("working2?")
+        println()
         val bodystr = response.body().string() // this can be consumed only once
-
         return bodystr
     }
 
