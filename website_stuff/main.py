@@ -611,6 +611,7 @@ def deleted_form1():
         return render_template('login_index.html', adminError=adminError)
     return render_template('event_deleted_form.html', event_id=event_id)
 
+
 @app.route('/showmetheusertable', methods=['GET', 'POST'])
 def showmetheusertable():
      if os.environ.get('GAE_ENV') == 'standard':
@@ -625,11 +626,13 @@ def showmetheusertable():
     result = cursor.execute("Select * from users")
     dd = cursor.fetchall()
     column = ["user_id", "name", "phone", "email", "EID", "admin"]
-    items = [dict(zip([key[0] for key in cursor.description], row)) for row in dd]
+     list =[]
     
-    print(items)
+    for item in dd:
+        hello = dict(zip(column, item))
+        list.append(hello.copy())
     
-    jusers = json.dumps({'users': items})
+    jusers = json.dumps(list)
     print(jusers)
 
     return jusers
