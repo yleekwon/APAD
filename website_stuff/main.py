@@ -612,8 +612,8 @@ def deleted_form1():
     return render_template('event_deleted_form.html', event_id=event_id)
 
 
-@app.route('/showmetheusertable', methods=['GET', 'POST'])
-def showmetheusertable():
+@app.route('/usertable', methods=['GET', 'POST'])
+def usertable():
      if os.environ.get('GAE_ENV') == 'standard':
          unix_socket = '/cloudsql/{}'.format(db_connection_name)
          cnx = pymysql.connect(user=db_user, password=db_password,
@@ -636,6 +636,59 @@ def showmetheusertable():
     print(jusers)
 
     return jusers
+@app.route('/eventtable', methods=['GET', 'POST'])
+def eventtable():
+    if os.environ.get('GAE_ENV') == 'standard':
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        cnx = pymysql.connect(user=db_user, password=db_password,
+                              unix_socket=unix_socket, db=db_name)
+
+    else: 
+	host = '127.0.0.1'
+	cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+
+    cursor = cnx.cursor() 
+    result = cursor.execute("Select * from events")
+    dd = cursor.fetchall()
+    column = ["event_id", "name", "description", "expected_attendance", "current_attendance", "venue_id", "event_owner", "start_time"]
+    
+    list =[]
+    
+    for item in dd:
+        hello = dict(zip(column, item))
+        list.append(hello.copy())
+    
+    jevents = json.dumps(list)
+    print(jevents)
+
+    return jevents
+
+@app.route('/timetable', methods=['GET', 'POST'])
+def timetable():
+    if os.environ.get('GAE_ENV') == 'standard':
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        cnx = pymysql.connect(user=db_user, password=db_password,
+                              unix_socket=unix_socket, db=db_name)
+    else:
+    	host = '127.0.0.1'
+    	cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+   
+    cursor = cnx.cursor() 
+    result = cursor.execute("Select * from Time")
+    dd = cursor.fetchall()
+    column = ["time_id","event_id", "venue_id", "timeslot"]
+    
+    list =[]
+    
+    for item in dd:
+        hello = dict(zip(column, item))
+        list.append(hello.copy())
+    
+    jtime = json.dumps(list)
+    print(jtime)
+
+    return jtime
+
 
 if __name__ == '__main__':
     # app.run(host='127.0.0.1', port=8080, debug=True)
