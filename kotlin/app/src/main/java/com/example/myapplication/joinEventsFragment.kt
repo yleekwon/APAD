@@ -40,10 +40,10 @@ class joinEventsFragment : Fragment(){
 
         view.button.setOnClickListener {
             doAsync {
-                println("this should werk")
-                fetchInfo(txtsearchuser.toString(),txtsearchuser2.toString())
-                println("did I work?")
-                txtusername.text = "Joined event"
+                    println("this should werk")
+                    fetchInfo(txtsearchuser.getText().toString(), txtsearchuser2.getText().toString())
+                    println("did I work?")
+                    txtusername.text = "Joined event"
             }
         }
         return view
@@ -58,6 +58,7 @@ class joinEventsFragment : Fragment(){
                     }
                     """.trimIndent()
         val client = OkHttpClient()
+        println(json)
         val body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json)
         val request = Request.Builder()
             .url(url)
@@ -66,7 +67,7 @@ class joinEventsFragment : Fragment(){
             .build()
         println("working?")
         val response = client.newCall(request).execute()
-        println()
+        println("")
         val bodystr = response.body().string() // this can be consumed only once
         return bodystr
     }

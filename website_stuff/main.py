@@ -393,7 +393,7 @@ def joinform():
     return render_template("joinform.html", tables=[df.to_html(classes='data', index=False, header="true")], titles=df.columns.values)
 
 # NEEDS TO BE FIXED BUT PUSHING FOR NOW
-@app.route('/joinsubmittedjson') 
+@app.route('/joinsubmittedjson', methods=['GET', 'POST']) 
 def joinsubmittedjson():
     if os.environ.get('GAE_ENV') == 'standard':
         unix_socket = '/cloudsql/{}'.format(db_connection_name)
@@ -403,12 +403,14 @@ def joinsubmittedjson():
         host = '127.0.0.1'
         cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
 
+    cursor = cnx.cursor()
     
     data = request.get_json() 
+    print (data)
     EID = data['EID']
-    print (EID)
+    print(EID)
     event_id = data['event_id']
-    print (event_id)
+    print(event_id)
 
     sql = "SELECT user_id FROM users WHERE EID = %s"
     cursor.execute(sql, (EID,))
