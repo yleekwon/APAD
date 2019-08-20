@@ -786,6 +786,32 @@ def timetable():
     print(jtime)
     return Response(jtime, mimetype='application/json')
 
+@app.route('/confirmedtable', methods=['GET', 'POST'])
+def confirmedtable():
+    if os.environ.get('GAE_ENV') == 'standard':
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        cnx = pymysql.connect(user=db_user, password=db_password,
+                              unix_socket=unix_socket, db=db_name)
+    else:
+    	host = '127.0.0.1'
+    	cnx = mysql.connector.connect(host="127.0.0.1", user = "root", password = "root", database = "testing1", unix_socket="/Applications/MAMP/tmp/mysql/mysql.sock")
+   
+    cursor = cnx.cursor() 
+    result = cursor.execute("Select * from confirmedEvents")
+    dd = cursor.fetchall()
+    column = ["confirmedEvents_id","event_id", "user_id"]
+    
+    list =[]
+    
+    for item in dd:
+        hello = dict(zip(column, item))
+        list.append(hello.copy())
+    
+    jtime = json.dumps(list).replace("null","empty")
+    #jtime = jsonify(list)
+
+    print(jtime)
+    return Response(jtime, mimetype='application/json')
 
 
 
