@@ -20,6 +20,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/event_venue_button"/>
     <Button
+            android:text="Events you're in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/events_in_button"/>
+    <Button
             android:text="logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -36,6 +36,9 @@ class NavigationFragment : Fragment() {
         view.free_times_button.setOnClickListener({
             (activity as NavigationHost).navigateTo(freeTimeFragment(), false) })
 
+        view.events_in_button.setOnClickListener({
+            (activity as NavigationHost).navigateTo(eventsInFragment(), false) })
+
         view.logout_button.setOnClickListener({
             (activity as NavigationHost).navigateTo(LoginFragment(), false) })
         return view
